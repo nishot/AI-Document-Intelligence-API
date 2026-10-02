@@ -1,10 +1,19 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+# Virtual Environments
+.venv/
+env/
+venv/
 
-# Virtual environments
-.venv
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+
+# Secrets & Local Configs
+.env
+.env.*
+
+# Local Vector Databases & Storage
+*.db
+*.sqlite3
+chroma_db/
+vector_store/
+uploads/

@@ -1,19 +1,16 @@
-# Virtual Environments
-.venv/
-env/
-venv/
-
-# Python Cache & Bytecode
-__pycache__/
+# Python & Backend
+**/__pycache__/
+**/.venv/
 *.py[cod]
+*.env
 
-# Secrets & Local Configs
-.env
-.env.*
+# Node / Frontend
+**/node_modules/
+**/dist/
+**/.next/
+**/build/
 
-# Local Vector Databases & Storage
-*.db
-*.sqlite3
-chroma_db/
-vector_store/
-uploads/
+# OS & Editor
+.DS_Store
+.vscode/
+.idea/

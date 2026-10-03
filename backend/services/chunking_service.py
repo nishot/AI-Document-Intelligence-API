@@ -1,10 +1,16 @@
 from transformers import AutoTokenizer
+from pdf_service import extract_text_from_pdf
+
 
 tokenizer=AutoTokenizer.from_pretrained(
     "sentence-transformers/all-MiniLM-L6-v2"
 )
+target_tokens=400
+max_token=450
+overlap=50
 
-from pdf_service import extract_text_from_pdf
+
+
 text_data=extract_text_from_pdf("D:/chapter_15_literature/Paper_2.pdf")
 
 
@@ -15,46 +21,50 @@ def count_tokens(item):
         )
     return len(tokens)
 
-def split_into_lines(text: str) -> list[str]:
-    return [
-        line.strip()
-        for line in text.split("\n")
-        if line.strip()
-    ]
 
-# def split_into_paragraph(text)->list[str]:
-#     paragraphs=text.split('\n\n')
-#     return [paragraph.strip() for paragraph in paragraphs if paragraph.strip()]
+def split_text(text,max_token=max_token):
+    words=text.split()
+    current=[]
+    chunks=[]
+    for word in words:
+        test=" ".join(current+[word])
+        if count_tokens(test) <=max_token:
+            current.append(word)
+        else:
+            if current:
+                chunks.append(" ".join(current))
+            current=[word]
+    if current:
+        chunks.append(" ".join(current))
 
-def inspect_doc(text_data):
+    return chunks
+
+def create_chunk(text_data):
+    chunks=[]
     for page in text_data:
-        lines=split_into_lines(page['text'])
-        for i , paragraph in enumerate(lines):
-            print("==========================")
-            tokens=count_tokens(paragraph)
-            # print("line",i+1)
-            print("tokens",tokens)
-            print(i,repr(lines))
+        page_no=page["page_no"]
+        text=page['text'].strip()
+
+        blocks=[
+            block.strip()
+            for block in text.split("\n\n")
+            if block.strip()
+        ]
+        for block in blocks:
+            if count_tokens(block)>max_token:
+                small_chunks=split_text(block)
+            else:
+                small_chunks=[block]
+            for small_chunk in small_chunks:
+                chunks.append({
+                    "page_no":page_no,
+                    "text":small_chunk,
+                    "token_count":count_tokens(small_chunk)
+                })
+    return chunks
 
 
-# def chunking(text_data):
-#     chunk_size=600
-#     max=1000
-#     overlap=100
-#     curr_chunk=[]
-#     curr_token=0
-#     separators = [
-#     "\n\n",   # paragraph
-#     "\n",     # line
-#     ". ",     # sentence-ish
-#     " ",      # word
-#     ]
-#     for item in text_data:
-#         count=count_tokens(item['text'])
-#         splitted=split_into_paragraph(item['text'])
-#         print(count)
-#         print(splitted)
 
-
-# chunking(text_data)
-inspect_doc(text_data)
+if __name__=="__main__":
+    print(create_chunk(text_data))
+    

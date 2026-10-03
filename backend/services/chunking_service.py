@@ -1,5 +1,5 @@
 from transformers import AutoTokenizer
-from pdf_service import extract_text_from_pdf
+# from pdf_service import extract_text_from_pdf
 
 
 tokenizer=AutoTokenizer.from_pretrained(
@@ -11,7 +11,7 @@ overlap=50
 
 
 
-text_data=extract_text_from_pdf("D:/chapter_15_literature/Paper_2.pdf")
+# text_data=extract_text_from_pdf("D:/chapter_15_literature/Paper_2.pdf")
 
 
 def count_tokens(item):
@@ -22,13 +22,13 @@ def count_tokens(item):
     return len(tokens)
 
 
-def split_text(text,max_token=max_token):
+def split_text(text:str,max_tokens:int=450):
     words=text.split()
     current=[]
     chunks=[]
     for word in words:
         test=" ".join(current+[word])
-        if count_tokens(test) <=max_token:
+        if count_tokens(test) <=max_tokens:
             current.append(word)
         else:
             if current:
@@ -51,10 +51,7 @@ def create_chunk(text_data):
             if block.strip()
         ]
         for block in blocks:
-            if count_tokens(block)>max_token:
-                small_chunks=split_text(block)
-            else:
-                small_chunks=[block]
+            small_chunks=split_text(block,max_tokens=450)
             for small_chunk in small_chunks:
                 chunks.append({
                     "page_no":page_no,
@@ -65,6 +62,5 @@ def create_chunk(text_data):
 
 
 
-if __name__=="__main__":
-    print(create_chunk(text_data))
-    
+# if __name__=="__main__":
+#     print(create_chunk(text_data))

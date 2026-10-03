@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer
-from chunking_service import create_chunk
-from pdf_service import extract_text_from_pdf
+from .chunking_service import create_chunk
+from .pdf_service import extract_text_from_pdf
 
 model=SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 

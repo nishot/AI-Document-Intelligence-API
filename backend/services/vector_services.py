@@ -18,3 +18,4 @@ def search(index,query_embedd,chunk,top_k:int=3):
             "distance":distance
         })
 
+    return result

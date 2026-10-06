@@ -172,13 +172,13 @@ DocMind/
 │   │
 │   ├── routes/
 │   │   ├── documents.py
-│   │   └── chat.py
+│   │   └── chats.py
 │   │
 │   ├── services/
 │   │   ├── pdf_service.py
 │   │   ├── chunking_service.py
 │   │   ├── embedding_service.py
-│   │   ├── vector_service.py
+│   │   ├── vector_services.py
 │   │   └── llm_services.py
 │   │
 │   ├── data/
@@ -186,10 +186,13 @@ DocMind/
 │   │
 │   └── tests/
 │
-├── frontend/
-│
 ├── .gitignore
-├── requirements.txt
+├── frontend/
+│   ├── index.html
+│   ├── styles.css
+│   └── app.js
+│
+├── backend/pyproject.toml
 └── README.md
 ```
 
@@ -466,11 +469,16 @@ data/uploads/
 
 ---
 
-# Running the API
+# Running the Application
+
+DocMind runs as two local processes: the FastAPI backend and the static frontend. Start the backend before uploading a document from the UI.
+
+## Start the API
 
 From the `backend` directory:
 
-```bash
+```powershell
+cd backend
 uvicorn main:app --reload
 ```
 
@@ -486,17 +494,34 @@ Swagger documentation:
 http://127.0.0.1:8000/docs
 ```
 
----
+## Start the frontend
 
-## Running the Frontend
-
-Start the API first, then serve the static frontend from the repository root:
+From the repository root, serve the `frontend/` directory:
 
 ```powershell
 python -m http.server 5173 --directory frontend
 ```
 
-Open `http://127.0.0.1:5173` in a browser. The frontend uses `http://127.0.0.1:8000` by default and supports PDF upload, grounded questions, and source-page citations. If the API runs elsewhere, set `window.DOCMIND_API_URL` before loading `frontend/app.js`.
+Open the application at:
+
+```text
+http://127.0.0.1:5173
+```
+
+The frontend is dependency-free and includes:
+
+- Drag-and-drop PDF upload
+- Document processing status
+- Suggested questions
+- Grounded answers from Gemini
+- Page-level source citations and retrieval distances
+- Chat history for the current session
+- API connection and error states
+- Responsive layouts for desktop and mobile
+
+The frontend connects to `http://127.0.0.1:8000` by default. To use another API URL, define `window.DOCMIND_API_URL` before loading `frontend/app.js`.
+
+> The backend enables CORS for local frontend development. For production, replace the permissive CORS setting in `backend/main.py` with the exact frontend origin.
 
 ---
 
@@ -540,6 +565,15 @@ Gemini generates an answer using those chunks.
 ### Step 5 — Return Sources
 
 The API returns the answer together with the relevant document pages.
+
+### Browser workflow
+
+1. Open `http://127.0.0.1:5173`.
+2. Drop a PDF into the **Source material** panel or browse for one.
+3. Wait for the document to finish processing.
+4. Enter a question in the chat composer, or choose a suggested prompt.
+5. Review the answer and the cited source pages in the right-hand panel.
+6. Use **New session** to clear the current document and conversation.
 
 ---
 
@@ -616,7 +650,7 @@ Image-only/scanned PDFs are not currently processed using OCR.
 
 ### Frontend
 
-The repository now includes a dependency-free frontend in `frontend/` for uploading PDFs, asking questions, and viewing grounded page citations.
+The repository includes a dependency-free frontend in `frontend/` for uploading PDFs, asking questions, and viewing grounded page citations. The frontend does not add a JavaScript package manager or build step.
 
 ---
 
@@ -640,7 +674,6 @@ Planned improvements include:
 - Evaluation metrics for retrieval quality
 - Automated tests
 - Production deployment
-- Frontend interface
 
 ---
 

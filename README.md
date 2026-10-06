@@ -488,6 +488,18 @@ http://127.0.0.1:8000/docs
 
 ---
 
+## Running the Frontend
+
+Start the API first, then serve the static frontend from the repository root:
+
+```powershell
+python -m http.server 5173 --directory frontend
+```
+
+Open `http://127.0.0.1:5173` in a browser. The frontend uses `http://127.0.0.1:8000` by default and supports PDF upload, grounded questions, and source-page citations. If the API runs elsewhere, set `window.DOCMIND_API_URL` before loading `frontend/app.js`.
+
+---
+
 # Example Workflow
 
 ### Step 1 — Upload
@@ -604,7 +616,7 @@ Image-only/scanned PDFs are not currently processed using OCR.
 
 ### Frontend
 
-The current project focuses on the backend and RAG pipeline. A frontend can be added later.
+The repository now includes a dependency-free frontend in `frontend/` for uploading PDFs, asking questions, and viewing grounded page citations.
 
 ---
 
@@ -704,7 +716,7 @@ Source Pages
 - [ ] Persistent storage
 - [ ] Authentication
 - [ ] Advanced retrieval
-- [ ] Frontend
+- [x] Frontend
 - [ ] Production deployment
 
 ---
